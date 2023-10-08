@@ -115,14 +115,8 @@ class CrimeDetailFragment : Fragment() {
                     binding.crimePhoto3,
                     binding.crimePhoto4
                 )
-                imageFileNames.add(photoName!!);
+                imageFileNames.add(0, photoName!!);
                 println(photoName)
-
-                if (imageFileNames.size > imageViews.size) {
-                    val removedFileName = imageFileNames.removeAt(0)
-                    // Delete the file associated with the removed photo if needed
-                    // (you can add this logic if you want)
-                }
 
                 for ((index, fileName) in imageFileNames.withIndex()) {
                     if (index < imageViews.size) {
@@ -133,6 +127,7 @@ class CrimeDetailFragment : Fragment() {
                         )
                         if (imageFile.exists()) {
                             val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+                            println(imageViews[index])
                             imageViews[index].setImageBitmap(bitmap)
                             imageViews[index].visibility = View.VISIBLE
                         }
