@@ -28,6 +28,7 @@ import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeDetailBi
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Date
+import com.bignerdranch.android.criminalintent.Crime
 
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
@@ -51,22 +52,77 @@ class CrimeDetailFragment : Fragment() {
     }
 
     private var photoName: String? = null
+    private var photoName1: String? = null
+    private var photoName2: String? = null
+    private var photoName3: String? = null
+    private var photoName4: String? = null
 
-    // Maintain a list of image resource IDs
-//    private val imageResourceIds = mutableListOf<Int>()
+    private val imageFileNames = mutableListOf<String>()
 
     private val takePhoto = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { didTakePhoto: Boolean ->
         if (didTakePhoto && photoName != null) {
             // Update the crime detail view model with the photo file name
-            crimeDetailViewModel.updateCrime { oldCrime ->
-                oldCrime.copy(photoFileName = photoName)
+            if(imageFileNames.size == 0) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    oldCrime.copy(photoFileName = photoName)
+                }
+            } else if(imageFileNames.size == 1) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 1 " + oldCrime)
+                    oldCrime.copy(photoFileName1 = photoName)
+                }
+            }else if(imageFileNames.size == 2) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 2" + oldCrime)
+                    oldCrime.copy(photoFileName2 = photoName)
+                }
             }
+            else if(imageFileNames.size == 3) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 3" + oldCrime)
+                    oldCrime.copy(photoFileName3 = photoName)
+                }
+            }
+            else if(imageFileNames.size == 4) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 4" + oldCrime)
+                    oldCrime.copy(
+                        photoFileName = photoName
+                    )
+                }
+            }
+            else if(imageFileNames.size == 5) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 4" + oldCrime)
+                    oldCrime.copy(
+                        photoFileName1 = photoName
+                    )
+                }
+            }
+            else if(imageFileNames.size == 6) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 4" + oldCrime)
+                    oldCrime.copy(
+                        photoFileName2 = photoName
+                    )
+                }
+            }
+            else if(imageFileNames.size == 7) {
+                crimeDetailViewModel.updateCrime { oldCrime ->
+                    println("this is a test for 4" + oldCrime)
+                    oldCrime.copy(
+                        photoFileName3 = photoName
+                    )
+                }
+            }
+
+            imageFileNames.add(photoName!!)
+
 
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,13 +132,10 @@ class CrimeDetailFragment : Fragment() {
         _binding =
             FragmentCrimeDetailBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    private val imageFileNames = mutableListOf<String>();
+    };
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.apply {
             crimeTitle.doOnTextChanged { text, _, _, _ ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
@@ -105,34 +158,9 @@ class CrimeDetailFragment : Fragment() {
                 null
             )
             crimeSuspect.isEnabled = canResolveIntent(selectSuspectIntent)
-
             crimeCamera.setOnClickListener {
                 photoName = "IMG_${Date()}.JPG"
-                val imageViews = listOf(
-                    binding.crimePhoto,
-                    binding.crimePhoto1,
-                    binding.crimePhoto2,
-                    binding.crimePhoto3,
-                    binding.crimePhoto4
-                )
-                imageFileNames.add(0, photoName!!);
-                println(photoName)
 
-                for ((index, fileName) in imageFileNames.withIndex()) {
-                    if (index < imageViews.size) {
-                        println(index)
-                        val imageFile = File(
-                            requireContext().applicationContext.filesDir,
-                            fileName
-                        )
-                        if (imageFile.exists()) {
-                            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-                            println(imageViews[index])
-                            imageViews[index].setImageBitmap(bitmap)
-                            imageViews[index].visibility = View.VISIBLE
-                        }
-                    }
-                }
                 val photoFile = File(
                     requireContext().applicationContext.filesDir,
                     photoName
@@ -208,7 +236,7 @@ class CrimeDetailFragment : Fragment() {
                 getString(R.string.crime_suspect_text)
             }
 
-            updatePhoto(crime.photoFileName)
+            updatePhoto(crime.photoFileName, crime.photoFileName1, crime.photoFileName2, crime.photoFileName3, crime.photoFileName4)
         }
     }
 
@@ -258,7 +286,7 @@ class CrimeDetailFragment : Fragment() {
         return resolvedActivity != null
     }
 
-    private fun updatePhoto(photoFileName: String?) {
+    private fun updatePhoto(photoFileName: String?, photoFileName1: String?, photoFileName2: String?, photoFileName3: String?,photoFileName4: String?) {
         if (binding.crimePhoto.tag != photoFileName) {
             val photoFile = photoFileName?.let {
                 File(requireContext().applicationContext.filesDir, it)
@@ -280,6 +308,84 @@ class CrimeDetailFragment : Fragment() {
                 binding.crimePhoto.setImageBitmap(null)
                 binding.crimePhoto.tag = null
                 binding.crimePhoto.contentDescription =
+                    getString(R.string.crime_photo_no_image_description)
+            }
+        }
+
+        if (binding.crimePhoto1.tag != photoFileName1) {
+            val photoFile1 = photoFileName1?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+            println("test"+photoFile1);
+            if (photoFile1?.exists() == true) {
+                binding.crimePhoto1.doOnLayout { measuredView ->
+                    val scaledBitmap = getScaledBitmap(
+                        photoFile1.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.crimePhoto1.setImageBitmap(scaledBitmap)
+                    binding.crimePhoto.tag = photoFileName1
+                    binding.crimePhoto1.contentDescription =
+                        getString(R.string.crime_photo_image_description)
+                }
+
+            } else {
+                binding.crimePhoto1.setImageBitmap(null)
+                binding.crimePhoto1.tag = null
+                binding.crimePhoto1.contentDescription =
+                    getString(R.string.crime_photo_no_image_description)
+            }
+        }
+
+        if (binding.crimePhoto2.tag != photoFileName2) {
+            val photoFile2 = photoFileName2?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+            println("test"+photoFile2);
+            if (photoFile2?.exists() == true) {
+                binding.crimePhoto2.doOnLayout { measuredView ->
+                    val scaledBitmap = getScaledBitmap(
+                        photoFile2.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.crimePhoto2.setImageBitmap(scaledBitmap)
+                    binding.crimePhoto2.tag = photoFileName2
+                    binding.crimePhoto2.contentDescription =
+                        getString(R.string.crime_photo_image_description)
+                }
+
+            } else {
+                binding.crimePhoto2.setImageBitmap(null)
+                binding.crimePhoto2.tag = null
+                binding.crimePhoto2.contentDescription =
+                    getString(R.string.crime_photo_no_image_description)
+            }
+        }
+
+        if (binding.crimePhoto3.tag != photoFileName3) {
+            val photoFile3 = photoFileName3?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+            println("test"+photoFile3);
+            if (photoFile3?.exists() == true) {
+                binding.crimePhoto2.doOnLayout { measuredView ->
+                    val scaledBitmap = getScaledBitmap(
+                        photoFile3.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.crimePhoto3.setImageBitmap(scaledBitmap)
+                    binding.crimePhoto3.tag = photoFileName3
+                    binding.crimePhoto3.contentDescription =
+                        getString(R.string.crime_photo_image_description)
+                }
+
+            } else {
+                binding.crimePhoto3.setImageBitmap(null)
+                binding.crimePhoto3.tag = null
+                binding.crimePhoto3.contentDescription =
                     getString(R.string.crime_photo_no_image_description)
             }
         }

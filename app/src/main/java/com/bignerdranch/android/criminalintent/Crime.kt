@@ -12,6 +12,10 @@ data class Crime(
     val date: Date,
     val isSolved: Boolean,
     val suspect: String = "",
-    val photoFileName: String? = null
+    val photoFileName: String? = null,
+    val photoFileName1: String? = null,
+    val photoFileName2: String? = null,
+    val photoFileName3: String? = null,
+    val photoFileName4: String? = null
 //    val photoFileNames: List<String> = emptyList()
 )
