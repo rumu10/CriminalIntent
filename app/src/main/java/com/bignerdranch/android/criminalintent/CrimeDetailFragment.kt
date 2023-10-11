@@ -28,12 +28,16 @@ import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeDetailBi
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Date
+import android.widget.CheckBox
 import com.bignerdranch.android.criminalintent.Crime
 
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeDetailFragment : Fragment() {
     private var _binding: FragmentCrimeDetailBinding? = null
+    private lateinit var contourDetectionCheckbox: CheckBox
+    private lateinit var faceDetectionCheckbox: CheckBox
+    private lateinit var meshDetectionCheckbox: CheckBox
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
@@ -136,6 +140,32 @@ class CrimeDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        meshDetectionCheckbox = view.findViewById(R.id.meshDetectionCheckbox)
+        contourDetectionCheckbox = view.findViewById(R.id.contourDetectionCheckbox)
+        faceDetectionCheckbox = view.findViewById(R.id.faceDetectionCheckbox)
+
+
+        contourDetectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                meshDetectionCheckbox.isChecked = false
+                faceDetectionCheckbox.isChecked = false
+            }
+        }
+
+        meshDetectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                faceDetectionCheckbox.isChecked = false
+                contourDetectionCheckbox.isChecked = false
+            }
+        }
+
+        faceDetectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                contourDetectionCheckbox.isChecked = false
+                meshDetectionCheckbox.isChecked = false
+            }
+        }
         binding.apply {
             crimeTitle.doOnTextChanged { text, _, _, _ ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
