@@ -38,6 +38,7 @@ class CrimeDetailFragment : Fragment() {
     private lateinit var contourDetectionCheckbox: CheckBox
     private lateinit var faceDetectionCheckbox: CheckBox
     private lateinit var meshDetectionCheckbox: CheckBox
+    private lateinit var selfieDetectionCheckbox: CheckBox
     private val binding
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
@@ -144,12 +145,21 @@ class CrimeDetailFragment : Fragment() {
         meshDetectionCheckbox = view.findViewById(R.id.meshDetectionCheckbox)
         contourDetectionCheckbox = view.findViewById(R.id.contourDetectionCheckbox)
         faceDetectionCheckbox = view.findViewById(R.id.faceDetectionCheckbox)
-
+        selfieDetectionCheckbox = view.findViewById(R.id.selfieSegmentationCheckbox)
 
         contourDetectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 meshDetectionCheckbox.isChecked = false
                 faceDetectionCheckbox.isChecked = false
+                selfieDetectionCheckbox.isChecked = false
+            }
+        }
+
+        selfieDetectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                meshDetectionCheckbox.isChecked = false
+                faceDetectionCheckbox.isChecked = false
+                contourDetectionCheckbox.isChecked= false
             }
         }
 
@@ -157,6 +167,7 @@ class CrimeDetailFragment : Fragment() {
             if (isChecked) {
                 faceDetectionCheckbox.isChecked = false
                 contourDetectionCheckbox.isChecked = false
+                selfieDetectionCheckbox.isChecked = false
             }
         }
 
@@ -164,6 +175,7 @@ class CrimeDetailFragment : Fragment() {
             if (isChecked) {
                 contourDetectionCheckbox.isChecked = false
                 meshDetectionCheckbox.isChecked = false
+                selfieDetectionCheckbox.isChecked = false
             }
         }
         binding.apply {
